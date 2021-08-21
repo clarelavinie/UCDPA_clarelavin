@@ -45,11 +45,22 @@ print(dub_data.shape)
 check_Dub_for_Nan = dub_data["rain"].isnull().values.any()
 print(check_Dub_for_Nan)
 
-#convert date from object to datetime format
-val_data["date"] = pd.to_datetime(val_data["date"], format='%d-%m-%y')
-val_data["date"] = val_data["date"].mask(val_data["date"].dt.year > 2021, 
-                                         val_data["date"] - pd.offsets.DateOffset(years=100))
-print(val_data.head())
+#merge files
+weather_data = dub_data.merge(val_data, 
+                              how="outer", 
+                              on="date", 
+                              suffixes=("_val", "_dub"))
+# print first few lines of weather_data
+print(weather_data.head())
+
+# print shape of weather_data
+print(weather_data.shape)
+
+# create a file with only rainfall data
+rain_data = weather_data[["date", "rain_val", "rain_dub"]]
+print(rain_data.head())
+
+
 
 
 
