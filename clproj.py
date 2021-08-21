@@ -49,7 +49,7 @@ print(check_Dub_for_Nan)
 weather_data = dub_data.merge(val_data, 
                               how="outer", 
                               on="date", 
-                              suffixes=("_val", "_dub"))
+                              suffixes=("_dub", "_val"))
 # print first few lines of weather_data
 print(weather_data.head())
 
@@ -59,6 +59,21 @@ print(weather_data.shape)
 # create a file with only rainfall data
 rain_data = weather_data[["date", "rain_val", "rain_dub"]]
 print(rain_data.head())
+
+#count missing data
+count_missing = rain_data.isnull().sum()
+print(count_missing[0:4])
+
+#fill in missing data with 0
+cleaned_rain_data = rain_data.fillna(0)
+check_rain_data = cleaned_rain_data.isnull().sum()
+print(check_rain_data[0:4])
+
+#describe file data
+print(cleaned_rain_data.describe())
+
+print(rain_data.info())
+
 
 
 
