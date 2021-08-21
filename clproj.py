@@ -56,8 +56,11 @@ print(weather_data.head())
 # print shape of weather_data
 print(weather_data.shape)
 
+#print info on dataframe
+print(weather_data.info())
+
 # create a file with only rainfall data
-rain_data = weather_data[["date", "rain_val", "rain_dub"]]
+rain_data = weather_data[["date", "rain_dub", "rain_val"]]
 print(rain_data.head())
 
 #count missing data
