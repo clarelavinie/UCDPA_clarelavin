@@ -51,3 +51,21 @@ weather_data = dub_data.merge(val_data,
 print(weather_data.info())
 
 print(weather_data[["rain_dub", "rain_val"]].head())
+
+rain_data = weather_data[["date", "rain_dub", "rain_val"]]
+print(rain_data.head())
+
+print(rain_data.describe())
+
+#correct date format
+#import datetime
+#rain_data["date"] = pd.to_datetime(rain_data["date"])#
+#print(rain_data.head())#
+#print(rain_data.min())#
+#print(rain_data.max())#
+
+#Correct years from 1942 to 1970
+#removed code as doesn't work
+
+#create cumulative rainfall for Valencia and Dublin Airport
+rain_data_years["rain_dub_cum"] = rain_data_years["rain_dub"].comsum()
