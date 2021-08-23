@@ -68,4 +68,11 @@ print(rain_data.describe())
 #removed code as doesn't work
 
 #create cumulative rainfall for Valencia and Dublin Airport
-rain_data_years["rain_dub_cum"] = rain_data_years["rain_dub"].comsum()
+#correct date formate attempt 2
+dates = pd.to_datetime(rain_data.date, format="%d-%b-%Y")
+print(dates)
+
+#assign new date format to date column and set it as the index
+rain_data = (rain_data.assign(date=dates).set_index("date"))
+print(rain_data)
+
