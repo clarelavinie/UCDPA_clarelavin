@@ -76,3 +76,16 @@ print(dates)
 rain_data = (rain_data.assign(date=dates).set_index("date"))
 print(rain_data)
 
+#Going to split the data to compare in 25 year periods
+rain_data_25_one = rain_data.loc['1946-01-01':'1970-12-31']
+print(rain_data_25_one.describe())
+
+#25 years from 1971 to 1995
+rain_data_25_two = rain_data.loc['1971-01-01':'1995-12-31']
+print(rain_data_25_two.describe())
+
+#25 years from 1996 to 2020
+rain_data_25_three = rain_data.loc['1996-01-01':'2020-12-31']
+print(rain_data_25_three.describe())
+
+
