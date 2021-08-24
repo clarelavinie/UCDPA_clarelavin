@@ -88,4 +88,29 @@ print(rain_data_25_two.describe())
 rain_data_25_three = rain_data.loc['1996-01-01':'2020-12-31']
 print(rain_data_25_three.describe())
 
+#add a column to see if a day had any rainfall in Dublin Airport
+result = []
+for value in rain_data["rain_dub"]:
+    if value > 0.0:
+        result.append(1)
+    else:
+        result.append(0)
+       
+rain_data["raindays_dub"] = result   
+print(rain_data)
+
+
+#add a column to see if a day had any rainfall in Valencia
+result = []
+for value in rain_data["rain_val"]:
+    if value > 0.0:
+        result.append(1)
+    else:
+        result.append(0)
+        
+rain_data["raindays_val"] = result
+print(rain_data)
+
+rain_data.sum(axis=0)
+
 

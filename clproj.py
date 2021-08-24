@@ -55,7 +55,7 @@ print(dates)
 #assign new date format to date column and set it as the index
 rain_data = (rain_data.assign(date=dates).set_index("date"))
 print(rain_data)
-
+    
 
 
 
