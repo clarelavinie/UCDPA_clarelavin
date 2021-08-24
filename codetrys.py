@@ -21,6 +21,7 @@ val_data_temp["date"] - pd.offsets.DateOffset(years=100)
 val_data_temp["date"] -= pd.offsets.DateOffset(years=100)
 print(val_data_temp.head())
 
+#Import weather data for Valencia
 val_data = pd.read_csv(r"C:\Users\clare\OneDrive\Documents\Clare\Cert in Introductory Data analytics\Weather data\Val_data.csv", skiprows=24)
 print(val_data.info())
 
@@ -76,17 +77,6 @@ print(dates)
 rain_data = (rain_data.assign(date=dates).set_index("date"))
 print(rain_data)
 
-#Going to split the data to compare in 25 year periods
-rain_data_25_one = rain_data.loc['1946-01-01':'1970-12-31']
-print(rain_data_25_one.describe())
-
-#25 years from 1971 to 1995
-rain_data_25_two = rain_data.loc['1971-01-01':'1995-12-31']
-print(rain_data_25_two.describe())
-
-#25 years from 1996 to 2020
-rain_data_25_three = rain_data.loc['1996-01-01':'2020-12-31']
-print(rain_data_25_three.describe())
 
 #add a column to see if a day had any rainfall in Dublin Airport
 result = []
@@ -113,4 +103,17 @@ print(rain_data)
 
 rain_data.sum(axis=0)
 
+#Group data by year
+annual_rain_data = rain_data.groupby(pd.Grouper(freq='A')).sum()
+print(annual_rain_data.head())
 
+#plot the yearly rainfall amounts
+timeline = annual_rain_data["1924-12-31":"2020-12-31"]
+fig, ax = plt.subplots()
+ax.plot(timeline.index, timeline["rain_dub"], label='Dub')
+ax.plot(timeline.index, timeline["rain_val"], label='Val')
+ax.set_xlabel('Year')
+ax.set_ylabel('Annual rainfall Dublin Airport and Valencia (mm)')
+ax.set_title("Rainfall data 1942 to 2020")
+plt.legend()
+plt.show()
