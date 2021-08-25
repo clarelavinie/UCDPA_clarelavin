@@ -71,7 +71,7 @@ print(rain_data.describe())
 
 #create cumulative rainfall for Valencia and Dublin Airport
 #correct date formate attempt 2
-dates = pd.to_datetime(rain_data.date, format="%d-%b-%Y")
+dates = pd.to_datetime(rain_data.date, infer_datetime_format=True)
 print(dates)
 
 #assign new date format to date column and set it as the index
@@ -104,22 +104,8 @@ print(rain_data)
 
 rain_data.sum(axis=0)
 
-#create a season column
-def season_of_date(date):
-    seasons = {'Spring':(datetime(%Y-Feb-%d), datetime(%Y-Apr-%d)),
-               'Summer':(datetime(%Y-Jun-%d), datetime(%Y-Aug-%d)),
-               'Autumn':(datetime(%Y-Sep-%d), datetime(%Y-Nov-%d))}
-    if date in seasons['Spring']:
-        return 'Spring'
-    if date in seasons['Summer']:
-        return 'Summer'
-    if date in seasons['Autumn']:
-        return 'Autumn'
-    else:
-        return 'Winter'
-
-# Assuming df has a date column of type `datetime`
-rain_data['season'] = rain_data.map(season_of_date)
+rain_data["month"] = rain_data["date"].dt.month
+print(rain_data.head())
 
 
 
