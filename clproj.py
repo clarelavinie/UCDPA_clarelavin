@@ -55,6 +55,15 @@ print(dates)
 #assign new date format to date column and set it as the index
 rain_data = (rain_data.assign(date=dates).set_index("date"))
 print(rain_data)
+
+#Group data by year
+annual_rain_data = rain_data.groupby(pd.Grouper(freq='A')).sum()
+print(annual_rain_data.head())
+
+#Add a 20 year moving average field for Valencia and Dublin
+annual_rain_data['SMA_20_Dub'] = annual_rain_data["rain_dub"].expanding(min_periods=20).mean()
+annual_rain_data['SMA_20_Val'] = annual_rain_data["rain_val"].expanding(min_periods=20).mean()
+print(annual_rain_data.head(21))
     
 
 

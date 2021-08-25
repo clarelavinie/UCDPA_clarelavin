@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+#Import data for Valencia
 val_data_temp = pd.read_csv(r"C:\Users\clare\OneDrive\Documents\Clare\Cert in Introductory Data analytics\Weather data\Dub_airport_weather_data_July.csv", skiprows=25)
 print(val_data_temp.head())
 
@@ -103,17 +104,52 @@ print(rain_data)
 
 rain_data.sum(axis=0)
 
+#create a season column
+def season_of_date(date):
+    seasons = {'Spring':(datetime(%Y-Feb-%d), datetime(%Y-Apr-%d)),
+               'Summer':(datetime(%Y-Jun-%d), datetime(%Y-Aug-%d)),
+               'Autumn':(datetime(%Y-Sep-%d), datetime(%Y-Nov-%d))}
+    if date in seasons['Spring']:
+        return 'Spring'
+    if date in seasons['Summer']:
+        return 'Summer'
+    if date in seasons['Autumn']:
+        return 'Autumn'
+    else:
+        return 'Winter'
+
+# Assuming df has a date column of type `datetime`
+rain_data['season'] = rain_data.map(season_of_date)
+
+
+
+#add seasons column to data
+    
+
 #Group data by year
 annual_rain_data = rain_data.groupby(pd.Grouper(freq='A')).sum()
 print(annual_rain_data.head())
+
+#Add a 20 year moving average field for Valencia and Dublin
+annual_rain_data['SMA_20_Dub'] = annual_rain_data["rain_dub"].expanding(min_periods=20).mean()
+annual_rain_data['SMA_20_Val'] = annual_rain_data["rain_val"].expanding(min_periods=20).mean()
+print(annual_rain_data.head(21))
 
 #plot the yearly rainfall amounts
 timeline = annual_rain_data["1924-12-31":"2020-12-31"]
 fig, ax = plt.subplots()
 ax.plot(timeline.index, timeline["rain_dub"], label='Dub')
 ax.plot(timeline.index, timeline["rain_val"], label='Val')
+ax.plot(timeline.index, timeline["SMA_20_Val"], label='20yr MA Val', linestyle='dashed')
+ax.plot(timeline.index, timeline["SMA_20_Dub"], label='20yr MA Dub', linestyle='dashed')
 ax.set_xlabel('Year')
-ax.set_ylabel('Annual rainfall Dublin Airport and Valencia (mm)')
-ax.set_title("Rainfall data 1942 to 2020")
+ax.set_ylabel('Annual Rainfall (mm)')
+ax.set_title("Annual Rainfall, 1942 to 2020: Valencia and Dublin stations")
 plt.legend()
 plt.show()
+
+#import seaborn
+import seaborn as sns
+
+#plot the rainfall days per year
+
