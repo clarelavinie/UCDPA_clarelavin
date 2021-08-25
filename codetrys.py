@@ -8,6 +8,7 @@ Created on Sat Aug 21 15:00:50 2021
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 #Import data for Valencia
 val_data_temp = pd.read_csv(r"C:\Users\clare\OneDrive\Documents\Clare\Cert in Introductory Data analytics\Weather data\Dub_airport_weather_data_July.csv", skiprows=25)
@@ -79,10 +80,10 @@ rain_data = (rain_data.assign(date=dates).set_index("date"))
 print(rain_data)
 
 
-#add a column to see if a day had any rainfall in Dublin Airport
+#add a column to indicate if rain day in Dublin Airport
 result = []
 for value in rain_data["rain_dub"]:
-    if value > 0.0:
+    if value > 0.2:
         result.append(1)
     else:
         result.append(0)
@@ -91,10 +92,10 @@ rain_data["raindays_dub"] = result
 print(rain_data)
 
 
-#add a column to see if a day had any rainfall in Valencia
+#add a column to indicate if rain day in Valencia
 result = []
 for value in rain_data["rain_val"]:
-    if value > 0.0:
+    if value > 0.2:
         result.append(1)
     else:
         result.append(0)
@@ -104,38 +105,86 @@ print(rain_data)
 
 rain_data.sum(axis=0)
 
-rain_data["month"] = rain_data["date"].dt.month
+#add a column to indicate if heavy rain day in Valencia
+result = []
+for value in rain_data["rain_val"]:
+    if value > 10.0:
+        result.append(1)
+    else:
+        result.append(0)
+        
+rain_data["heavyraindays_val"] = result
+print(rain_data)
+    
+#add a column to indicate if heavy rain day in Dublin Airport
+result = []
+for value in rain_data["rain_dub"]:
+    if value > 10.0:
+        result.append(1)
+    else:
+        result.append(0)
+       
+rain_data["heavyraindays_dub"] = result   
+print(rain_data)
+
+rain_data.sum(axis=0)
+
+#create a month and year column
+rain_data["month"] = rain_data.index.month
+rain_data["year"] = rain_data.index.year
 print(rain_data.head())
 
-
-
-#add seasons column to data
-    
-
 #Group data by year
-annual_rain_data = rain_data.groupby(pd.Grouper(freq='A')).sum()
+annual_rain_data = rain_data.groupby("year").sum()
+annual_rain_data = annual_rain_data.iloc[:-1,:]
 print(annual_rain_data.head())
+print(annual_rain_data.info())
 
 #Add a 20 year moving average field for Valencia and Dublin
-annual_rain_data['SMA_20_Dub'] = annual_rain_data["rain_dub"].expanding(min_periods=20).mean()
-annual_rain_data['SMA_20_Val'] = annual_rain_data["rain_val"].expanding(min_periods=20).mean()
+annual_rain_data['MA_20_Dub'] = annual_rain_data["rain_dub"].expanding(min_periods=20).mean()
+annual_rain_data['MA_20_Val'] = annual_rain_data["rain_val"].expanding(min_periods=20).mean()
 print(annual_rain_data.head(21))
 
+
 #plot the yearly rainfall amounts
-timeline = annual_rain_data["1924-12-31":"2020-12-31"]
+timeline = annual_rain_data()
 fig, ax = plt.subplots()
 ax.plot(timeline.index, timeline["rain_dub"], label='Dub')
 ax.plot(timeline.index, timeline["rain_val"], label='Val')
-ax.plot(timeline.index, timeline["SMA_20_Val"], label='20yr MA Val', linestyle='dashed')
-ax.plot(timeline.index, timeline["SMA_20_Dub"], label='20yr MA Dub', linestyle='dashed')
+ax.plot(timeline.index, timeline["MA_20_Val"], label='20yr MA Val', linestyle='dashed')
+ax.plot(timeline.index, timeline["MA_20_Dub"], label='20yr MA Dub', linestyle='dashed')
 ax.set_xlabel('Year')
 ax.set_ylabel('Annual Rainfall (mm)')
 ax.set_title("Annual Rainfall, 1942 to 2020: Valencia and Dublin stations")
 plt.legend()
 plt.show()
 
-#import seaborn
-import seaborn as sns
+#Group rainfall days by year
+fig, ax = plt.subplots()
+ax.plot(annual_rain_data.index, annual_rain_data["rain_dub"], label='Dub')
+ax.plot(annual_rain_data.index, annual_rain_data["rain_val"], label='Val')
+ax.plot(annual_rain_data.index, annual_rain_data["MA_20_Val"], label='20yr MA Val', linestyle='dashed')
+ax.plot(annual_rain_data.index, annual_rain_data["MA_20_Dub"], label='20yr MA Dub', linestyle='dashed')
+ax.set_xlabel('Year')
+ax.set_ylabel('Annual Rainfall (mm)')
+ax.set_title('Annual Rainfall, 1942 to 2020: Valencia and Dublin stations')
+plt.legend()
+plt.show()
 
-#plot the rainfall days per year
+#compare heavy rain days to rain days
+fig, ax = plt.subplots()
+ax.plot(annual_rain_data.index, annual_rain_data["heavyraindays_dub"], label='Heavy raindays Dub')
+ax.plot(annual_rain_data.index, annual_rain_data["heavyraindays_val"], label='Heavy raindays Val')
+ax.plot(annual_rain_data.index, annual_rain_data["raindays_dub"], label='Total raindays Dub')
+ax.plot(annual_rain_data.index, annual_rain_data["raindays_val"], label='Total raindays Val')
+ax.set_xlabel('Year')
+ax.set_ylabel('Raindays')
+ax.set_title('Rainfall Days and Heavy Rainfall Days, 1942 - 2020')
+plt.legend()
+plt.show()
+
+#group data by season
+rain_data["month"] = rain_data.index.month
+print(rain_data.head())
+
 
