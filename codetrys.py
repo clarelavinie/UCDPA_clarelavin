@@ -182,7 +182,33 @@ SeasonDict = {12: "Winter", 1: "Winter", 2: "Winter", 3: "Spring", 4: "Spring", 
 rain_data["Season"] = rain_data["month"].map(SeasonDict)
 print(rain_data)
 
+#groupby year and season to create new dataframe for each season for Valentia
+rain_by_season = rain_data.pivot_table(index="year", columns="Season", values="rain_val", aggfunc=np.sum)
+rain_by_season = rain_by_season.iloc[:-1:,]
+print(rain_by_season)
+
+
 #group data by season and create plots for each season
+fig, ax = plt.subplots(2, 2)
+fig.suptitle("Rainfall by Season (mm), 1942 - 2020, Valentia Station")
+ax[0, 0].plot(rain_by_season.index, rain_by_season["Winter"], color="r")
+ax[0, 0].set_ylabel("Rainfall")
+ax[0, 0].set_title("Winter")
+ax[0, 1].plot(rain_by_season.index, rain_by_season["Spring"], color="g")
+ax[0, 1].set_title("Spring")
+ax[1, 0].plot(rain_by_season.index, rain_by_season["Summer"], color="b")
+ax[1, 0].set_ylabel("Rainfall")
+ax[1, 0].set_title("Summer")
+ax[1, 1].plot(rain_by_season.index, rain_by_season["Autumn"], color="c")
+ax[1, 1].set_title("Autumn")
+plt.show()
 
-
+#rain by month
+MonthDict = {1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr", 5: "May", 6: "Jun", 7: "Jul", \
+              8: "Aug", 9: "Sep", 10: "Oct", 11: "Nov", 12: "Dec"}
+rain_data["Month_name"] = rain_data["month"].map(MonthDict)
+print(rain_data)
+rain_by_month = rain_data.pivot_table(index="year", columns="Month_name", values="rain_val", aggfunc=np.sum)
+rain_by_month = rain_by_month.iloc[:-1:,]
+print(rain_by_month)
 
