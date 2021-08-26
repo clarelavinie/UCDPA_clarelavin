@@ -140,11 +140,32 @@ annual_rain_data = annual_rain_data.iloc[:-1,:]
 print(annual_rain_data.head())
 print(annual_rain_data.info())
 
-#Add a 20 year moving average field for Valentia and Dublin
+#Add a 20 year moving average field for Valentia and Dublin on rain columns
 annual_rain_data['MA_20_Dub'] = annual_rain_data["rain_dub"].expanding(min_periods=20).mean()
 annual_rain_data['MA_20_Val'] = annual_rain_data["rain_val"].expanding(min_periods=20).mean()
 print(annual_rain_data.head(21))
 
+#Add a 20 year moving average field for Valentia and Dublin on heavy rain day columns
+annual_rain_data['MA_20_Dub_h'] = annual_rain_data["heavyraindays_dub"].expanding(min_periods=20).mean()
+annual_rain_data['MA_20_Val_h'] = annual_rain_data["heavyraindays_val"].expanding(min_periods=20).mean()
+print(annual_rain_data.head(21))
+
+#Add a 20 year moving average field for Valentia and Dublin for rain day columns
+annual_rain_data['MA_20_Dub_n'] = annual_rain_data["raindays_dub"].expanding(min_periods=20).mean()
+annual_rain_data['MA_20_Val_n'] = annual_rain_data["raindays_val"].expanding(min_periods=20).mean()
+print(annual_rain_data.head(21))
+
+
+#create a sorted datebase to get top thirty rain days for Valentia
+top_30_val = rain_data[["Date", "rain_val"]]
+top_30_val = top_30_val.sort_values(by="rain_val", ascending=False)
+top_30_val = top_30_val.iloc[0:29,:]
+print(top_30_val.head())
+
+#create a sorted database to get top thrity rain days for Dublin Airport
+top_30_dub = rain_data.sort_values(by="rain_dub", ascending=False)
+top_30_dub = top_30_dub.iloc[0:29,:]
+print(top_30_dub.head())
 
 #plot the yearly rainfall amounts
 fig, ax = plt.subplots()
@@ -162,18 +183,26 @@ plt.show()
 fig, ax = plt.subplots(2, 1, sharex=True)
 fig.suptitle("Rainfall Days and Heavy Rainfall Days, 1942 - 2020, Valentia Station")
 ax[0].plot(annual_rain_data.index, annual_rain_data["heavyraindays_val"], marker="s", color="r")
+ax[0].plot(annual_rain_data.index, annual_rain_data["MA_20_Val_h"], label='20yr MA Val Heavy raindays', linestyle='dashed', color="c")
 ax[0].set_ylabel("Heavy Rain Days\nDays Rain >=10mm")
+ax[0].legend()
 ax[1].plot(annual_rain_data.index, annual_rain_data["raindays_val"], marker="s", color="b")
+ax[1].plot(annual_rain_data.index, annual_rain_data["MA_20_Val_n"], label='20yr MA Val Raindays', linestyle='dashed', color="g")
 ax[1].set_ylabel("Rain Days\nDays Rain >=0.2mm")
+ax[1].legend()
 plt.show()
 
 #show heavy rain days to rain days Dublin
 fig, ax = plt.subplots(2, 1, sharex=True)
 fig.suptitle("Rainfall Days and Heavy Rainfall Days, 1942 - 2020, Dublin Station")
 ax[0].plot(annual_rain_data.index, annual_rain_data["heavyraindays_dub"], marker="o", color="g")
+ax[0].plot(annual_rain_data.index, annual_rain_data["MA_20_Dub_h"], label='20yr MA Dub Heavy raindays', linestyle='dashed', color="r")
 ax[0].set_ylabel("Heavy Rain Days\nDays Rain >=10mm")
+ax[0].legend()
 ax[1].plot(annual_rain_data.index, annual_rain_data["raindays_dub"], marker="o", color="m")
+ax[1].plot(annual_rain_data.index, annual_rain_data["MA_20_Dub_n"], label='20yr MA Dub Raindays', linestyle='dashed', color="b")
 ax[1].set_ylabel("Rain Days\nDays Rain >=0.2mm")
+ax[1].legend()
 plt.show()
 
 #Create season column
@@ -203,12 +232,9 @@ ax[1, 1].plot(rain_by_season.index, rain_by_season["Autumn"], color="c")
 ax[1, 1].set_title("Autumn")
 plt.show()
 
-#rain by month
-MonthDict = {1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr", 5: "May", 6: "Jun", 7: "Jul", \
-              8: "Aug", 9: "Sep", 10: "Oct", 11: "Nov", 12: "Dec"}
-rain_data["Month_name"] = rain_data["month"].map(MonthDict)
-print(rain_data)
-rain_by_month = rain_data.pivot_table(index="year", columns="Month_name", values="rain_val", aggfunc=np.sum)
-rain_by_month = rain_by_month.iloc[:-1:,]
-print(rain_by_month)
+#create scatter graphs for top 30 rain days for Valentia
+
+sns.set_style("dark")
+sns.scatterplot(top_30_val.index, top_30_val["rain_val"])
+plt.show()
 
